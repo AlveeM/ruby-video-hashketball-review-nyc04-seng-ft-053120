@@ -203,3 +203,83 @@ def long_name_steals_a_ton?
   player_with_max_steals = player_max_stat(:steals)[:player_name]
   return longest_name == player_with_max_steals
 end
+
+# ### helper methods ### #
+def home_players_array
+  data = game_hash()
+  return data[:home][:players]
+end
+
+def away_players_array
+  data = game_hash()
+  return data[:away][:players]
+end
+
+def all_players_array
+  data = game_hash()
+  home = data[:home][:players]
+  away = data[:away][:players]
+  return home.concat(away)
+end
+
+def team_players_array(team_name)
+  data = game_hash()
+  
+  data.each do |top_key, hash|
+    if data[top_key][:team_name] == team_name
+      return data[top_key][:players]
+    end
+  end
+  
+  return nil
+end
+
+def team_hash(team_name)
+  data = game_hash()
+  
+  data.each do |top_key, hash|
+    if data[top_key][:team_name] == team_name
+      return data[top_key]
+    end
+  end
+  
+  return nil
+end
+
+def team_points_hash
+  home_players = home_players_array()
+  away_players = away_players_array()
+  
+  home_points = home_players.reduce(0) {|acc, player| acc += player[:points]}
+  away_points = away_players.reduce(0) {|acc, player| acc += player[:points]}
+  
+  return result = {
+    home: home_points,
+    away: away_points
+  }
+end
+
+def player_hash(player_name)
+  all_players = all_players_array()
+  
+  all_players_array.each do |player|
+    if player[:player_name] == player_name
+      return player
+    end
+  end
+end
+
+def player_max_stat(stat_key)
+  max = -Float::INFINITY
+  target_player = nil
+  all_players = all_players_array()
+  
+  all_players.each do |player|
+    if player[stat_key] > max
+      max = player[stat_key]
+      target_player = player
+    end
+  end
+  
+  return target_player
+end
